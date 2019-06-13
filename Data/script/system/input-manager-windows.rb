@@ -3,19 +3,22 @@ module InputManager
   VK_LBUTTON = 0x1
   VK_RBUTTON = 0x2
   VK_MBUTTON = 0x4
+  WHEEL_DELTA = 120
+  
   HWND = Win32API.get_hwnd
-  @@struct_pos = Struct.new(:x, :y).new(nil, nil)
+  Point = Struct.new(:x, :y)
+  @@mouse_pos = Point.new(nil, nil)
 
   def self.update
-    @@struct_pos.x, @@struct_pos.y = get_mouse_pos(get_mouse_pos_in_screen)
+    @@mouse_pos.x, @@mouse_pos.y = get_mouse_pos(get_mouse_pos_in_screen)
   end
 
   def self.x
-    return @@struct_pos.x
+    return @@mouse_pos.x
   end
 
   def self.y
-    return @@struct_pos.y
+    return @@mouse_pos.y
   end
 
   def self.mouse_trigger?(key)
@@ -24,6 +27,20 @@ module InputManager
 
   def self.mouse_press?(key)
     return Win32API::GetAsyncKeyState.call(key) & 0x8000 == 0x8000
+  end
+
+  def self.mouse_wheel(delta, keys, x, y)
+    @@delta += delta
+    if @@delta.abs >= WHEEL_DELTA
+      delta_idx = - @@delta / WHEEL_DELTA
+      @@delta %= WHEEL_DELTA
+    end
+    @wheel = delta_idx
+  end
+  if !defined? Wheel
+    Wheel = Win32API.new('rm-mouse-wheel', 'intercept', 'v', 'v')
+    Wheel.call
+    @@delta = 0
   end
 
   def self.get_mouse_pos(pos)

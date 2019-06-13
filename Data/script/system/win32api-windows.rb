@@ -21,7 +21,7 @@ class Win32API
   ScreenToClient          = Win32API.new 'user32', 'ScreenToClient', 'lp', 'i'
   GetCursorPos            = Win32API.new 'user32', 'GetCursorPos', 'p', 'i'
   GetAsyncKeyState        = Win32API.new 'user32', 'GetAsyncKeyState', 'i', 'i'
-
+  
   # Constants
   GWL_STYLE      = -16
   WS_BORDER      = 0x800000
