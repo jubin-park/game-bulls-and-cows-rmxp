@@ -1,5 +1,6 @@
 require "system/win32api"
 require "system/graphics"
+require "system/input-manager"
 
 require "scene-manager"
 require "scene/intro"

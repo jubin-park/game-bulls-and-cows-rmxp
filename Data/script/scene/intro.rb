@@ -15,6 +15,7 @@ class Scene
 
     def update
       Graphics.update
+      InputManager.update
       update_scaled_logo
     end
 

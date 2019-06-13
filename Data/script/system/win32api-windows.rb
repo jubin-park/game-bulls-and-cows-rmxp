@@ -1,23 +1,26 @@
 class Win32API
   # API Functions
-  FindWindow              = Win32API.new 'user32', 'FindWindow', 'pp', 'l' 
-  GetActiveWindow         = Win32API.new 'user32', 'GetActiveWindow', 'v', 'l' 
-  GetPrivateProfileString = Win32API.new 'kernel32', 'GetPrivateProfileString', 'pppplp', 'l' 
-  FindWindow              = Win32API.new 'user32', 'FindWindow', 'pp', 'l' 
-  GetWindowRect           = Win32API.new 'user32', 'GetWindowRect', 'lp', 'l' 
-  GetSystemMetrics        = Win32API.new 'user32', 'GetSystemMetrics', 'l', 'l' 
-  GetAsyncKeyState        = Win32API.new 'user32', 'GetAsyncKeyState', 'l', 'l' 
-  AdjustWindowRect        = Win32API.new 'user32', 'AdjustWindowRect', 'pll', 'l' 
-  GetClientRect           = Win32API.new 'user32', 'GetClientRect', 'lp','i' 
-  ChangeDisplaySettings   = Win32API.new 'user32', 'ChangeDisplaySettingsW', 'pl', 'l' 
-  SetWindowLong           = Win32API.new 'user32', 'SetWindowLongA', 'pll', 'l' 
-  GetWindowLong           = Win32API.new 'user32', 'GetWindowLongA', 'll', 'l' 
-  SetWindowPos            = Win32API.new 'user32', 'SetWindowPos', 'lllllll', 'l' 
-  RegisterHotKey          = Win32API.new 'user32', 'RegisterHotKey', 'llll', 'l' 
-  GetDesktopWindow        = Win32API.new 'user32', 'GetDesktopWindow', 'v', 'l' 
-  GetForegroundWindow     = Win32API.new 'user32', 'GetForegroundWindow', 'v', 'l' 
-  GetAncestor             = Win32API.new 'user32', 'GetAncestor', 'll', 'l' 
-  GetClassName            = Win32API.new 'user32', 'GetClassName', 'lpl', 'l' 
+  FindWindow              = Win32API.new 'user32', 'FindWindow', 'pp', 'l'
+  GetActiveWindow         = Win32API.new 'user32', 'GetActiveWindow', 'v', 'l'
+  GetPrivateProfileString = Win32API.new 'kernel32', 'GetPrivateProfileString', 'pppplp', 'l'
+  FindWindow              = Win32API.new 'user32', 'FindWindow', 'pp', 'l'
+  GetWindowRect           = Win32API.new 'user32', 'GetWindowRect', 'lp', 'l'
+  GetSystemMetrics        = Win32API.new 'user32', 'GetSystemMetrics', 'l', 'l'
+  GetAsyncKeyState        = Win32API.new 'user32', 'GetAsyncKeyState', 'l', 'l'
+  AdjustWindowRect        = Win32API.new 'user32', 'AdjustWindowRect', 'pll', 'l'
+  GetClientRect           = Win32API.new 'user32', 'GetClientRect', 'lp','i'
+  ChangeDisplaySettings   = Win32API.new 'user32', 'ChangeDisplaySettingsW', 'pl', 'l'
+  SetWindowLong           = Win32API.new 'user32', 'SetWindowLongA', 'pll', 'l'
+  GetWindowLong           = Win32API.new 'user32', 'GetWindowLongA', 'll', 'l'
+  SetWindowPos            = Win32API.new 'user32', 'SetWindowPos', 'lllllll', 'l'
+  RegisterHotKey          = Win32API.new 'user32', 'RegisterHotKey', 'llll', 'l'
+  GetDesktopWindow        = Win32API.new 'user32', 'GetDesktopWindow', 'v', 'l'
+  GetForegroundWindow     = Win32API.new 'user32', 'GetForegroundWindow', 'v', 'l'
+  GetAncestor             = Win32API.new 'user32', 'GetAncestor', 'll', 'l'
+  GetClassName            = Win32API.new 'user32', 'GetClassName', 'lpl', 'l'
+  ScreenToClient          = Win32API.new 'user32', 'ScreenToClient', 'lp', 'i'
+  GetCursorPos            = Win32API.new 'user32', 'GetCursorPos', 'p', 'i'
+  GetAsyncKeyState        = Win32API.new 'user32', 'GetAsyncKeyState', 'i', 'i'
 
   # Constants
   GWL_STYLE      = -16
@@ -60,7 +63,12 @@ class Win32API
   def self.get_rect_of_adjust_window(width, height, style)
     buffer = [0, 0, width, height].pack('i4')
     AdjustWindowRect.call(buffer, style, 0)
-    buffer = buffer.unpack('i4')
-    return Rect.new(*buffer)
+    return Rect.new(*buffer.unpack('i4'))
+  end
+
+  def self.get_rect_of_client(hwnd)
+    buffer = [0, 0, 0, 0].pack('i4')
+    GetClientRect.call(hwnd, buffer)
+    return Rect.new(*buffer.unpack('l4'))
   end
 end
