@@ -1,24 +1,23 @@
 module InputManager
 
-  VK_LBUTTON = 0x1
-  VK_RBUTTON = 0x2
-  VK_MBUTTON = 0x4
-  WHEEL_DELTA = 120
-  
-  HWND = Win32API.get_hwnd
+  module Mouse
+    VK_LBUTTON = 0x1
+    VK_RBUTTON = 0x2
+    VK_MBUTTON = 0x4
+    WHEEL_DELTA = 120
+  end
+
   Point = Struct.new(:x, :y)
   @@mouse_pos = Point.new(nil, nil)
-
+  
+  HWND = Win32API.get_hwnd
+  
   def self.update
     @@mouse_pos.x, @@mouse_pos.y = get_mouse_pos(get_mouse_pos_in_screen)
   end
 
-  def self.x
-    return @@mouse_pos.x
-  end
-
-  def self.y
-    return @@mouse_pos.y
+  def self.pos
+    return @@mouse_pos
   end
 
   def self.mouse_trigger?(key)

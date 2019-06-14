@@ -3,7 +3,7 @@ module SceneManager
 
   def self.switch(klass)
     @@scene = nil
-    @@scene = klass.new()
+    @@scene = klass.new
   end
 
   def self.now

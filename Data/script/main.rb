@@ -4,6 +4,7 @@ require "system/input-manager"
 
 require "scene-manager"
 require "scene/intro"
+require "button"
 
 Graphics.frame_rate = 60
 Graphics.resize_screen 320, 320
