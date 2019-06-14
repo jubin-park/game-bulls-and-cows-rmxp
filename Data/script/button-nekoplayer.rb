@@ -26,6 +26,15 @@ class Button
       @touch = :up
       @event_method = Hash.new
     end
+
+    def dispose
+      @button_bitmap.each do |bitmap|
+        bitmap.dispose
+        bitmap = nil
+      end
+      @sprite.dispose
+      @sprite = nil
+    end
   
     def x=(value)
       @sprite.x = @x = value

@@ -29,21 +29,20 @@ class Scene
       @button_start.set_method(:button_up, method(:m_button_start_up))
     end
 
+    def dispose
+      @background.bitmap.dispose
+      @background.dispose
+      @logo.bitmap.dispose
+      @logo.dispose
+      @button_start.dispose
+    end
+
     def m_button_start_up
-      #SceneManager.switch(Scene::Game)
-      if $NEKO_RUBY
-        SDL.showAlert("Button Up")
-      else
-        print "Button Up"
-      end
+      dispose
+      SceneManager.switch(Scene::Level)
     end
 
     def m_button_start_down
-      if $NEKO_RUBY
-        SDL.showAlert("Button Down")
-      else
-        print "Button Down"
-      end      
     end
 
     def update
@@ -55,10 +54,12 @@ class Scene
 
     def update_scaled_logo
       @scale *= 0.95
-      @scale = 1.0 if @scale < 1
+      @scale = 1.0 if @scale < 1.0
       @logo.zoom_x = @logo.zoom_y = @scale
       @logo.opacity += 2
       @logo.opacity = 255 if @logo.opacity > 255
     end
+
+
   end
 end

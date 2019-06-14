@@ -3,6 +3,7 @@ module SceneManager
 
   def self.switch(klass)
     @@scene = nil
+    GC.start
     @@scene = klass.new
   end
 

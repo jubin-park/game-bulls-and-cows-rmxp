@@ -22,10 +22,18 @@ class Button
     else
       @button_bitmap = Array.new(3)
     end
-
     @area = :out
     @mouse = :up
     @event_method = Hash.new
+  end
+  
+  def dispose
+    @button_bitmap.each do |bitmap|
+      bitmap.dispose
+      bitmap = nil
+    end
+    @sprite.dispose
+    @sprite = nil
   end
 
   def x=(value)
