@@ -48,6 +48,14 @@ class Button
     @sprite.z = @z = value
   end
 
+  def opacity
+    @sprite.opacity
+  end
+
+  def opacity=(value)
+    @sprite.opacity = value
+  end
+
   def set_image(index, bitmap)
     @button_bitmap[index] = bitmap
   end
@@ -62,6 +70,8 @@ class Button
   end
 
   def update_bitmap
+    return if @sprite.opacity <= 0
+    return if @sprite.visible == false
     if !under_mouse?
       @sprite.bitmap = @button_bitmap[0]
     else
@@ -108,6 +118,8 @@ class Button
   end
 
   def under_mouse?
+    return false if @sprite.opacity <= 0
+    return false if @sprite.visible == false
     return InputManager.pos.x >= @x && InputManager.pos.x < @x + @width && InputManager.pos.y >= @y && InputManager.pos.y < @y + @height
   end
 end

@@ -48,6 +48,14 @@ class Button
       @sprite.z = @z = value
     end
   
+    def opacity
+      @sprite.opacity
+    end
+
+    def opacity=(value)
+      @sprite.opacity = value
+    end
+
     def set_image(index, bitmap)
       @button_bitmap[index] = bitmap
     end
@@ -62,6 +70,8 @@ class Button
     end
 
     def update_bitmap
+      return if @sprite.opacity <= 0
+      return if @sprite.visible == false
       if under_touch_first?
         if under_touch?
           @sprite.bitmap = @button_bitmap[2]
@@ -97,17 +107,23 @@ class Button
     end
 
     def under_touch?
-      return if InputManager.pos.x.nil?
+      return false if InputManager.pos.x.nil?
+      return false if @sprite.opacity <= 0
+      return false if @sprite.visible == false
       return InputManager.pos.x >= @x && InputManager.pos.x < @x + @width && InputManager.pos.y >= @y && InputManager.pos.y < @y + @height
     end
 
     def under_touch_first?
-      return if InputManager.down_pos.x.nil?
+      return false if InputManager.down_pos.x.nil?
+      return false if @sprite.opacity <= 0
+      return false if @sprite.visible == false
       return InputManager.down_pos.x >= @x && InputManager.down_pos.x < @x + @width && InputManager.down_pos.y >= @y && InputManager.down_pos.y < @y + @height
     end
 
     def under_touch_last?
-      return if InputManager.up_pos.x.nil?
+      return false if InputManager.up_pos.x.nil?
+      return false if @sprite.opacity <= 0
+      return false if @sprite.visible == false
       return InputManager.up_pos.x >= @x && InputManager.up_pos.x < @x + @width && InputManager.up_pos.y >= @y && InputManager.up_pos.y < @y + @height
     end
   end

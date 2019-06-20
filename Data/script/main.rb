@@ -11,7 +11,7 @@ require "button"
 Graphics.frame_rate = 60
 Graphics.resize_screen 320, 320
 
-SceneManager.switch(Scene::Level)
+SceneManager.switch(Scene::Intro)
 
 loop do
   if not SceneManager.now.nil?
