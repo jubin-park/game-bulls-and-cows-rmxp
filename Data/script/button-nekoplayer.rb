@@ -4,7 +4,8 @@ class Button
     attr_reader :z
     attr_reader :width
     attr_reader :height
-  
+    attr_reader :state_touch
+
     include InputManager
   
     def initialize(width, height, viewport = nil, &block)
@@ -23,7 +24,7 @@ class Button
         @button_bitmap = Array.new(3)
       end
       @area = :out
-      @touch = :up
+      @state_touch = :up
       @event_method = Hash.new
     end
 
@@ -36,6 +37,10 @@ class Button
       @sprite = nil
     end
   
+    def sprite
+      @sprite
+    end
+
     def x=(value)
       @sprite.x = @x = value
     end
@@ -65,7 +70,6 @@ class Button
     end
     
     def update
-      update_bitmap
       update_input
     end
 
@@ -89,19 +93,19 @@ class Button
 
     def update_input
       if under_touch_first?
-        if @touch == :up
+        if @state_touch == :up
           @event_method[:button_down].call if @event_method[:button_down].is_a?(Method)
-          @touch = :down
+          @state_touch = :down
         end
       end
       if under_touch_last?
-        if @touch == :down
+        if @state_touch == :down
           @event_method[:button_up].call if @event_method[:button_up].is_a?(Method)
-          @touch = :up
+          @state_touch = :up
         end
       else
         if InputManager.state == Finger::UP
-          @touch = :up
+          @state_touch = :up
         end
       end
     end

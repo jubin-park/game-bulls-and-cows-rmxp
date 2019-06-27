@@ -21,7 +21,8 @@ class Win32API
   ScreenToClient          = Win32API.new 'user32', 'ScreenToClient', 'lp', 'i'
   GetCursorPos            = Win32API.new 'user32', 'GetCursorPos', 'p', 'i'
   GetAsyncKeyState        = Win32API.new 'user32', 'GetAsyncKeyState', 'i', 'i'
-  
+  SendMessage             = Win32API.new 'user32', 'SendMessage', 'lllp', 'l'
+
   # Constants
   GWL_STYLE      = -16
   WS_BORDER      = 0x800000
@@ -40,7 +41,7 @@ class Win32API
   KEY_LALT = 0xA4
   KEY_RETURN = 0x0D
   GA_ROOT = 2
-
+  
   def self.get_hwnd
     buffer = "\0" * 256
     GetPrivateProfileString.call('Game', 'Title', '', buffer, buffer.size, 'Game.ini')

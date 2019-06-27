@@ -4,6 +4,8 @@ class Button
   attr_reader :z
   attr_reader :width
   attr_reader :height
+  attr_reader :state_area
+  attr_reader :state_mouse
 
   include InputManager
 
@@ -18,12 +20,12 @@ class Button
       @sprite.x = @x = option[:x] if option.key? :x
       @sprite.y = @y = option[:y] if option.key? :y
       @button_bitmap = option[:bitmap] if option.key? :bitmap
-      @sprite.bitmap = @button_bitmap[0]
+      @sprite.bitmap = @button_bitmap[0] if !@button_bitmap.nil?
     else
       @button_bitmap = Array.new(3)
     end
-    @area = :out
-    @mouse = :up
+    @state_area = :out
+    @state_mouse = :up
     @event_method = Hash.new
   end
   
@@ -36,6 +38,10 @@ class Button
     @sprite = nil
   end
 
+  def sprite
+    @sprite
+  end
+
   def x=(value)
     @sprite.x = @x = value
   end
@@ -46,6 +52,10 @@ class Button
 
   def z=(value)
     @sprite.z = @z = value
+  end
+
+  def update
+    update_input
   end
 
   def opacity
@@ -64,18 +74,13 @@ class Button
     @event_method[type] = mtd
   end
   
-  def update
-    update_bitmap
-    update_input
-  end
-
   def update_bitmap
     return if @sprite.opacity <= 0
     return if @sprite.visible == false
     if !under_mouse?
       @sprite.bitmap = @button_bitmap[0]
     else
-      if @mouse == :down
+      if @state_mouse == :down
         if @button_bitmap[2].is_a?(Bitmap)
           @sprite.bitmap = @button_bitmap[2]
         else
@@ -90,29 +95,29 @@ class Button
   def update_input
     if under_mouse?
       if InputManager.mouse_press?(Mouse::VK_LBUTTON)
-        if @area == :in
-          if @mouse == :up
+        if @state_area == :in
+          if @state_mouse == :up
             #p "down"
             @event_method[:button_down].call if @event_method[:button_down].is_a?(Method)
-            @mouse = :down
+            @state_mouse = :down
           end
         end
       else
-        @area = :in
-        if @mouse == :down
+        @state_area = :in
+        if @state_mouse == :down
           #p "up"
           @event_method[:button_up].call if @event_method[:button_up].is_a?(Method)
-          @mouse = :up
+          @state_mouse = :up
         end
       end
     else
-      @area = :out
+      @state_area = :out
       if InputManager.mouse_press?(Mouse::VK_LBUTTON)
-        if @mouse == :down
+        if @state_mouse == :down
           #p "!"
         end
       else
-        @mouse = :up
+        @state_mouse = :up
       end
     end
   end
