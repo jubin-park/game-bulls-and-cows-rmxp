@@ -5,6 +5,7 @@ require "system/input-manager"
 require "scene-manager"
 require "scene/intro"
 require "scene/level"
+require "scene/game"
 
 require "button"
 

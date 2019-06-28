@@ -7,9 +7,9 @@ class Scene
 
     include Config
 
-    def initialize
-      @background = Sprite.new
-      @background.bitmap = Bitmap.new("img/background2.png")
+    def initialize(*args)
+      @sprite_background = Sprite.new
+      @sprite_background.bitmap = Bitmap.new("img/background2.png")
       @sprite_title = Sprite.new
       @sprite_title.bitmap = Bitmap.new(320, 32)
       @sprite_title.y = 24
@@ -42,6 +42,8 @@ class Scene
           ]
         }
       end
+      @button_digit.set_method(:button_down, method(:m_button_digit_down))
+      @button_digit.set_method(:button_up, method(:m_button_digit_up))
       @button_range = Button.new(32, 32) do
         {
           :x => 178,
@@ -52,7 +54,37 @@ class Scene
           ]
         }
       end
+      @button_range.set_method(:button_down, method(:m_button_range_down))
+      @button_range.set_method(:button_up, method(:m_button_range_up))
       @index = PLAY_BUTTON_FRAME_HEAD
+    end
+
+    def m_button_digit_down
+      p "digit"
+    end
+
+    def m_button_digit_up
+
+    end
+
+    def m_button_range_down
+      p "range"
+    end
+
+    def m_button_range_up
+
+    end
+
+    def m_button_play_down
+      @button_play.sprite.bitmap = @bitmap_play[2]
+      @button_play.sprite.src_rect.width = @button_play.width
+      @index = PLAY_BUTTON_FRAME_HEAD if @index < PLAY_BUTTON_FRAME_HEAD
+    end
+
+    def m_button_play_up
+      @button_play.sprite.bitmap = @bitmap_play[2]
+      @button_play.sprite.src_rect.width = @button_play.width
+      @index = PLAY_BUTTON_FRAME_TAIL if @index > PLAY_BUTTON_FRAME_TAI
     end
 
     def update_play_button
@@ -93,18 +125,6 @@ class Scene
           @index -= 1
         end
       end
-    end
-
-    def m_button_play_down
-      @button_play.sprite.bitmap = @bitmap_play[2]
-      @button_play.sprite.src_rect.width = @button_play.width
-      @index = PLAY_BUTTON_FRAME_HEAD if @index < PLAY_BUTTON_FRAME_HEAD
-    end
-
-    def m_button_play_up
-      @button_play.sprite.bitmap = @bitmap_play[2]
-      @button_play.sprite.src_rect.width = @button_play.width
-      @index = PLAY_BUTTON_FRAME_TAIL if @index > PLAY_BUTTON_FRAME_TAIL
     end
 
     def update
