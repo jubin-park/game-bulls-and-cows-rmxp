@@ -20,9 +20,11 @@ class Button
       @sprite.x = @x = option[:x] if option.key? :x
       @sprite.y = @y = option[:y] if option.key? :y
       @button_bitmap = option[:bitmap] if option.key? :bitmap
+      @index = option[:index] if option.key? :index
       @sprite.bitmap = @button_bitmap[0] if !@button_bitmap.nil?
     else
       @button_bitmap = Array.new(3)
+      @index = nil
     end
     @state_area = :out
     @state_mouse = :up
@@ -98,7 +100,13 @@ class Button
         if @state_area == :in
           if @state_mouse == :up
             #p "down"
-            @event_method[:button_down].call if @event_method[:button_down].is_a?(Method)
+            if @event_method[:button_down].is_a?(Method)
+              if @index.nil?
+                @event_method[:button_down].call
+              else
+                @event_method[:button_down].call(@index)
+              end
+            end
             @state_mouse = :down
           end
         end
@@ -106,7 +114,13 @@ class Button
         @state_area = :in
         if @state_mouse == :down
           #p "up"
-          @event_method[:button_up].call if @event_method[:button_up].is_a?(Method)
+          if @event_method[:button_up].is_a?(Method)
+            if @index.nil?
+              @event_method[:button_up].call
+            else
+              @event_method[:button_up].call(@index)
+            end
+          end
           @state_mouse = :up
         end
       end

@@ -19,9 +19,11 @@ class Button
         @sprite.x = @x = option[:x] if option.key? :x
         @sprite.y = @y = option[:y] if option.key? :y
         @button_bitmap = option[:bitmap] if option.key? :bitmap
+        @index = option[:index] if option.key? :index
         @sprite.bitmap = @button_bitmap[0]
       else
         @button_bitmap = Array.new(3)
+        @index = nil
       end
       @area = :out
       @state_touch = :up
@@ -94,13 +96,23 @@ class Button
     def update_input
       if under_touch_first?
         if @state_touch == :up
-          @event_method[:button_down].call if @event_method[:button_down].is_a?(Method)
+          if @index.nil?
+            @event_method[:button_down].call
+          else
+            @event_method[:button_down].call(@index)
+          end
           @state_touch = :down
         end
       end
       if under_touch_last?
         if @state_touch == :down
-          @event_method[:button_up].call if @event_method[:button_up].is_a?(Method)
+          if @event_method[:button_up].is_a?(Method)
+            if @index.nil?
+              @event_method[:button_up].call
+            else
+              @event_method[:button_up].call(@index)
+            end
+          end
           @state_touch = :up
         end
       else

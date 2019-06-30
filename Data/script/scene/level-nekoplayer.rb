@@ -20,7 +20,7 @@ class Scene
       @sprite_title.y = 24
       @sprite_title.bitmap.font.size = 24
       @sprite_title.bitmap.font.color = Color.new(255, 255, 255)
-      @sprite_title.bitmap.draw_text(0, 0, 320, 32, "select level", 1)
+      @sprite_title.bitmap.draw_text(0, 0, 320, 32, "Choose Level", 1)
       @sprite_digit = Sprite.new
       @sprite_digit.bitmap = Bitmap.new(80, 16)
       @sprite_digit.bitmap.blt(0, 0, Bitmap.new("img/numbers.png"), Rect.new(32, 0, 80, 16))
