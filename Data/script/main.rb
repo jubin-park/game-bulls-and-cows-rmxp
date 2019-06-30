@@ -11,7 +11,6 @@ require "button"
 
 Graphics.frame_rate = 60
 Graphics.resize_screen 320, 320
-
 SceneManager.switch(Scene::Game, 6, [*('0'..'9')])
 
 loop do

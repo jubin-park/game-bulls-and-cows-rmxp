@@ -8,6 +8,8 @@ module Graphics
   WS_MAXIMIZEBOX = 0x00010000
   WS_MINIMIZEBOX = 0x00020000
   WM_SETICON = 0x0080
+  MOD_ALT = 0x0001
+  VK_RETURN = 0x0D
   
   def self.resize_screen(width, height)
     hwnd = Win32API.get_hwnd
@@ -21,6 +23,7 @@ module Graphics
     y = screen_rect.height - window_rect.height + window_rect.y
     y -= taskbar_rect.height if screen_rect.height != taskbar_rect.height
     Win32API::SetWindowPos.call(hwnd, Win32API::HWND_TOP, x / 2, y / 2, window_rect.width - window_rect.x, window_rect.height - window_rect.y, Win32API::SWP_SHOWWINDOW)
+    Win32API::RegisterHotKey.call(hwnd, 0, MOD_ALT, VK_RETURN)
     #Win32API::SendMessage.call(hwnd, Win32API::WM_SETICON, 1, [0].pack('i'))
     #Win32API::SendMessage.call(hwnd, Win32API::WM_SETICON, 0, [0].pack('i'))
     #Win32API::SetWindowPos.call(hwnd, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED)

@@ -22,6 +22,7 @@ class Win32API
   GetCursorPos            = Win32API.new 'user32', 'GetCursorPos', 'p', 'i'
   GetAsyncKeyState        = Win32API.new 'user32', 'GetAsyncKeyState', 'i', 'i'
   SendMessage             = Win32API.new 'user32', 'SendMessage', 'lllp', 'l'
+  RegisterHotKey          = Win32API.new 'user32', 'RegisterHotKey', 'llll', 'l'
 
   # Constants
   GWL_STYLE      = -16
