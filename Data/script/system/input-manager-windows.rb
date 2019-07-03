@@ -9,7 +9,8 @@ module InputManager
 
   Point = Struct.new(:x, :y)
   @@mouse_pos = Point.new(nil, nil)
-  
+  @@delta = 0
+
   HWND = Win32API.get_hwnd
   
   def self.update
@@ -18,6 +19,14 @@ module InputManager
 
   def self.pos
     return @@mouse_pos
+  end
+
+  def self.wheel_delta
+    return @@delta
+  end
+
+  def self.wheel_clear
+    @@delta = 0
   end
 
   def self.mouse_trigger?(key)
@@ -29,17 +38,11 @@ module InputManager
   end
 
   def self.mouse_wheel(delta, keys, x, y)
-    @@delta += delta
-    if @@delta.abs >= WHEEL_DELTA
-      delta_idx = - @@delta / WHEEL_DELTA
-      @@delta %= WHEEL_DELTA
-    end
-    @wheel = delta_idx
+    @@delta = delta / Mouse::WHEEL_DELTA
   end
   if !defined? Wheel
     Wheel = Win32API.new('rm-mouse-wheel', 'intercept', 'v', 'v')
     Wheel.call
-    @@delta = 0
   end
 
   def self.get_mouse_pos(pos)
