@@ -1,7 +1,7 @@
 class Scene
   class Game
     module ZOrder
-      BLACK_SCREEN = 50
+      BLACK_SCREEN = 20
       HOLE = 1
       ITEM_CIRCLE = 2
       ITEM = 3
@@ -11,7 +11,7 @@ class Scene
     end
 
     module Config
-      LIST_ITEM_SIZE = 10
+      LIST_ITEM_SIZE = 50
       LIST_HEIGHT_PER_LINE = 24
       LIST_HEIGHT = LIST_ITEM_SIZE * LIST_HEIGHT_PER_LINE
       BUTTON_TRY_SHOWED_Y = 210
@@ -22,7 +22,7 @@ class Scene
       args = *args
       @digit = args[0]
       @item_size = args[1].length
-      @real_answer = generate_answer(args[0], args[1].clone)
+      p @real_answer = generate_answer(args[0], args[1].clone)
       @phase = 0
       @my_answer = Array.new(@digit)
       @now_picked_item = nil
@@ -72,8 +72,8 @@ class Scene
       @sprite_item = Array.new(@item_size) {Sprite.new}
       @sprite_item.each_index do |i|
         @sprite_item[i].bitmap = bmp_item
-        @sprite_item[i].x = get_first_item_pos_x(i)
-        @sprite_item[i].y = get_first_item_pos_y(i)
+        @sprite_item[i].x = 2 + get_first_item_pos_x(i)
+        @sprite_item[i].y = 2 + get_first_item_pos_y(i)
         if @item_size == 26
           @sprite_item[i].src_rect.x = 160 + i * 16
         else
@@ -82,9 +82,9 @@ class Scene
         @sprite_item[i].src_rect.width = 16
         @sprite_item[i].z = ZOrder::ITEM
       end
-      bmp_circle = Bitmap.new("img/circle16.png")
+      bmp_circle = Bitmap.new("img/circle20.png")
       @button_item_circle = Array.new(@item_size) do |i|
-        Button.new(16, 16) do
+        Button.new(20, 20) do
           {
             :x => get_first_item_pos_x(i),
             :y => get_first_item_pos_y(i),
@@ -113,6 +113,7 @@ class Scene
       end
       @button_previous.set_method(:button_down, method(:m_button_previous_down))
       @button_previous.set_method(:button_up, method(:m_button_previous_up))
+      @button_previous.opacity = 0
       @viewport_list = Viewport.new(32, 160, 256, 144)
       @viewport_list.z = ZOrder::LIST_CONTENTS
       @sprite_list_background = Sprite.new
@@ -154,37 +155,6 @@ class Scene
       @button_try.y = Config::BUTTON_TRY_HIDDEN_Y if @button_try.y > Config::BUTTON_TRY_HIDDEN_Y
     end
 
-    def m_button_hole_down(hole_index)
-      # when item is already picked
-      if @now_picked_item != nil
-        old_item = @my_answer[hole_index]
-        # when item in hole is already existed
-        if old_item != nil
-          i = convert_ascii_to_index(old_item)
-          @sprite_item[i].x = get_first_item_pos_x(i)
-          @sprite_item[i].y = get_first_item_pos_y(i)
-        end
-        i = convert_ascii_to_index(@now_picked_item)
-        @sprite_item[i].x = get_inhole_item_pos_x(hole_index)
-        @sprite_item[i].y = get_inhole_item_pos_y(hole_index)
-        @my_answer[hole_index] = @now_picked_item
-      else
-        old_item = @my_answer[hole_index]
-        # when item in hole is already existed
-        if old_item != nil
-          i = convert_ascii_to_index(old_item)
-          @sprite_item[i].x = get_first_item_pos_x(i)
-          @sprite_item[i].y = get_first_item_pos_y(i)
-          @my_answer[hole_index] = nil
-        end
-      end
-      @now_picked_item = nil
-    end
-
-    def m_button_hole_up(hole_index)
-
-    end
-
     def m_button_try_down
       
     end
@@ -197,24 +167,8 @@ class Scene
       push_log
     end
 
-    def m_button_item_down(index)
-      
-    end
-
-    def m_button_item_up(index)
-      if @now_picked_item != nil
-        i = convert_ascii_to_index(@now_picked_item)
-        @sprite_item[i].x = get_first_item_pos_x(i)
-        @sprite_item[i].y = get_first_item_pos_y(i)
-      end
-      item = convert_index_to_ascii(index)
-      if not @my_answer.include?(item)
-        @now_picked_item = item
-      end
-    end
-
     def m_button_previous_down
-      
+
     end
 
     def m_button_previous_up
@@ -227,11 +181,11 @@ class Scene
     end
 
     def get_first_item_pos_x(index)
-      return 34 + (index % 10) * 26
+      return 32 + (index % 10) * 26
     end
 
     def get_first_item_pos_y(index)
-      return 72 + (index / 10) * 22
+      return 68 + (index / 10) * 22
     end
 
     def get_inhole_item_pos_x(index)

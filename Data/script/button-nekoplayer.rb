@@ -25,7 +25,6 @@ class Button
         @button_bitmap = Array.new(3)
         @index = nil
       end
-      @area = :out
       @state_touch = :up
       @event_method = Hash.new
     end
