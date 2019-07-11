@@ -69,7 +69,9 @@ class Scene
       return if @phase == 0
       SceneManager.previous.dispose
       dispose
-      SceneManager.switch(Scene::Game, 3, [*('0'..'9')])
+      SceneManager.switch(Scene::Game, 
+        Scene::Level::Config::LEVEL_DIGIT[$user_data.last_used.digit],
+        Scene::Level::Config::LEVEL_RANGE[$user_data.last_used.range])
     end
 
     def m_button_exit_up

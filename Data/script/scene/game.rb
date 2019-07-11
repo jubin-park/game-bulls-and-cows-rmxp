@@ -25,8 +25,6 @@ class Scene
       p @real_answer = generate_answer(args[0], args[1].clone)
       @phase = 0
       @my_answer = Array.new(@digit)
-      ##########
-      #@my_answer = @real_answer.clone
       @now_picked_item = nil
       @viewport_black = Viewport.new(0, 0, 320, 320)
       @viewport_black.z = ZOrder::BLACK_SCREEN

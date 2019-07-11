@@ -2,6 +2,7 @@ require "system/win32api"
 require "system/graphics"
 require "system/input-manager"
 require "system/kernel"
+require "system/user-data"
 
 require "scene-manager"
 require "scene/intro"
@@ -9,7 +10,7 @@ require "scene/level"
 require "scene/game"
 require "scene/result"
 
-require "button"
+require "ui/button"
 
 module Resolution
   def self.width
@@ -23,9 +24,8 @@ end
 Graphics.frame_rate = 60
 Graphics.resize_screen Resolution.width, Resolution.height
 
-a = [[*('0'..'9')], [*('A'..'Z')], [*('0'..'9')] + [*('A'..'Z')]]
+$user_data = UserData.new
 
-#SceneManager.switch(Scene::Game, 3, a[0])
 SceneManager.switch(Scene::Level)
 
 loop do

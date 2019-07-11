@@ -3,11 +3,16 @@ class Scene
     module Config
       PLAY_BUTTON_FRAME_HEAD = 0
       PLAY_BUTTON_FRAME_TAIL = 7
+      LEVEL_DIGIT = [2, 3, 4, 5, 6]
+      LEVEL_RANGE = [[*('0'..'9')], [*('A'..'Z')], [*('0'..'9')] + [*('A'..'Z')]]
     end
 
     include Config
 
     def initialize(*args)
+      @type_digit = $user_data.last_used.digit
+      @type_range = $user_data.last_used.range
+      @phase = -1
       @sprite_background = Sprite.new
       @sprite_background.bitmap = Bitmap.new("img/background2.png")
       @sprite_black = Sprite.new
@@ -36,13 +41,14 @@ class Scene
       @sprite_digit = Sprite.new
       @sprite_digit.bitmap = Bitmap.new(80, 16)
       @sprite_digit.bitmap.blt(0, 0, Bitmap.new("img/numbers.png"), Rect.new(32, 0, 80, 16))
-      @sprite_digit.src_rect.x = 16
+      #@sprite_digit.src_rect.x = @type_digit * 16
       @sprite_digit.src_rect.width = 16
       @sprite_digit.x = 116
       @sprite_digit.y = 173
       @sprite_digit.z = 1
       @sprite_range = Sprite.new
       @sprite_range.bitmap = Bitmap.new("img/range.png")
+      #@sprite_range.src_rect.y = @type_range * 16
       @sprite_range.src_rect.width = 24
       @sprite_range.x = 183
       @sprite_range.y = 169
@@ -81,9 +87,7 @@ class Scene
       @button_range.set_method(:button_down, method(:m_button_range_down))
       @button_range.set_method(:button_up, method(:m_button_range_up))
       @button_play_index = PLAY_BUTTON_FRAME_HEAD
-      @type_digit = 1
-      @type_range = 0
-      @phase = -1
+      refresh_eyeball
     end
 
     def dispose
@@ -135,6 +139,9 @@ class Scene
     def refresh_eyeball
       @sprite_digit.src_rect.x = @type_digit * 16
       @sprite_range.src_rect.x = @type_range * 24
+      $user_data.last_used.digit = @type_digit
+      $user_data.last_used.range = @type_range
+      $user_data.save
     end
 
     def update_label
@@ -157,11 +164,11 @@ class Scene
         end
       when 2
         dispose
-        digit = [2, 3, 4, 5, 6][@type_digit]
+        digit = LEVEL_DIGIT[@type_digit]
         if (digit == 2)
           range = ['A', 'D']
         else
-          range = [[*('0'..'9')], [*('A'..'Z')], [*('0'..'9')] + [*('A'..'Z')]][@type_range]
+          range = LEVEL_RANGE[@type_range]
         end
         SceneManager.switch(Scene::Game, digit, range)
       end
