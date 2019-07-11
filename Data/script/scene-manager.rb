@@ -1,13 +1,19 @@
 module SceneManager
-  @@scene = nil
+  @@now_scene = nil
+  @@previous_scene = nil
 
   def self.switch(klass, *args)
-    @@scene = nil
+    @@previous_scene = @@now_scene
+    @@now_scene = nil
     GC.start
-    @@scene = klass.new(args)
+    @@now_scene = klass.new(args)
   end
 
   def self.now
-    @@scene
+    @@now_scene
+  end
+
+  def self.previous
+    @@previous_scene
   end
 end

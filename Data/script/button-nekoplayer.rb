@@ -75,6 +75,7 @@ class Button
     end
 
     def update_bitmap
+      return if @sprite == nil
       return if @sprite.opacity <= 0
       return if @sprite.visible == false
       if under_touch_first?
@@ -95,10 +96,12 @@ class Button
     def update_input
       if under_touch_first?
         if @state_touch == :up
-          if @index.nil?
-            @event_method[:button_down].call
-          else
-            @event_method[:button_down].call(@index)
+          if @event_method[:button_down].is_a?(Method)
+            if @index.nil?
+              @event_method[:button_down].call
+            else
+              @event_method[:button_down].call(@index)
+            end
           end
           @state_touch = :down
         end
@@ -123,22 +126,37 @@ class Button
 
     def under_touch?
       return false if InputManager.pos.x.nil?
+      return false if @sprite == nil
       return false if @sprite.opacity <= 0
       return false if @sprite.visible == false
-      return InputManager.pos.x >= @x && InputManager.pos.x < @x + @width && InputManager.pos.y >= @y && InputManager.pos.y < @y + @height
+      if @sprite.viewport.nil?
+        return InputManager.pos.x >= @x && InputManager.pos.x < @x + @width && InputManager.pos.y >= @y && InputManager.pos.y < @y + @height
+      end
+      vx, vy = @sprite.viewport.rect.x, @sprite.viewport.rect.y
+      return InputManager.pos.x >= vx + @x && InputManager.pos.x < vx + @x + @width && InputManager.pos.y >= vy + @y && InputManager.pos.y < vy + @y + @height
     end
 
     def under_touch_first?
       return false if InputManager.down_pos.x.nil?
+      return false if @sprite == nil
       return false if @sprite.opacity <= 0
       return false if @sprite.visible == false
-      return InputManager.down_pos.x >= @x && InputManager.down_pos.x < @x + @width && InputManager.down_pos.y >= @y && InputManager.down_pos.y < @y + @height
+      if @sprite.viewport.nil?
+        return InputManager.down_pos.x >= @x && InputManager.down_pos.x < @x + @width && InputManager.down_pos.y >= @y && InputManager.down_pos.y < @y + @height
+      end
+      vx, vy = @sprite.viewport.rect.x, @sprite.viewport.rect.y
+      return InputManager.down_pos.x >= vx + @x && InputManager.down_pos.x < vx + @x + @width && InputManager.down_pos.y >= vy + @y && InputManager.down_pos.y < vy + @y + @height
     end
 
     def under_touch_last?
       return false if InputManager.up_pos.x.nil?
+      return false if @sprite == nil
       return false if @sprite.opacity <= 0
       return false if @sprite.visible == false
-      return InputManager.up_pos.x >= @x && InputManager.up_pos.x < @x + @width && InputManager.up_pos.y >= @y && InputManager.up_pos.y < @y + @height
+      if @sprite.viewport.nil?
+        return InputManager.up_pos.x >= @x && InputManager.up_pos.x < @x + @width && InputManager.up_pos.y >= @y && InputManager.up_pos.y < @y + @height
+      end
+      vx, vy = @sprite.viewport.rect.x, @sprite.viewport.rect.y
+      return InputManager.up_pos.x >= vx + @x && InputManager.up_pos.x < vx + @x + @width && InputManager.up_pos.y >= vy + @y && InputManager.up_pos.y < vy + @y + @height
     end
   end

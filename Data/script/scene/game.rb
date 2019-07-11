@@ -11,11 +11,11 @@ class Scene
     end
 
     module Config
-      LIST_ITEM_SIZE = 50
+      LIST_ITEM_SIZE = 20
       LIST_HEIGHT_PER_LINE = 24
       LIST_HEIGHT = LIST_ITEM_SIZE * LIST_HEIGHT_PER_LINE
-      BUTTON_TRY_SHOWED_Y = 210
-      BUTTON_TRY_HIDDEN_Y = 320
+      BUTTON_TRY_SHOWED_Y = 62
+      BUTTON_TRY_HIDDEN_Y = 160
     end
 
     def initialize(*args)
@@ -25,11 +25,14 @@ class Scene
       p @real_answer = generate_answer(args[0], args[1].clone)
       @phase = 0
       @my_answer = Array.new(@digit)
+      ##########
+      #@my_answer = @real_answer.clone
       @now_picked_item = nil
-      @sprite_black = Sprite.new
+      @viewport_black = Viewport.new(0, 0, 320, 320)
+      @viewport_black.z = ZOrder::BLACK_SCREEN
+      @sprite_black = Sprite.new(@viewport_black)
       @sprite_black.bitmap = Bitmap.new(320, 320)
       @sprite_black.bitmap.fill_rect(0, 0, 320, 320, Color.new(0, 0, 0))
-      @sprite_black.z = ZOrder::BLACK_SCREEN
       @sprite_background = Sprite.new
       @sprite_background.bitmap = Bitmap.new(640, 320)
       @sprite_background.bitmap.blt(0, 0, Bitmap.new("img/background.png"), Rect.new(0, 0, 320, 320))
@@ -45,10 +48,16 @@ class Scene
           }
         end
       end
-      @button_try = Button.new(32, 32) do
+      @button_hole.each do |button|
+        button.set_method(:button_down, method(:m_button_hole_down))
+        button.set_method(:button_up, method(:m_button_hole_up))
+        button.z = ZOrder::HOLE
+      end
+      @viewport_list_background = Viewport.new(0, 160, 320, 160)
+      @button_try = Button.new(36, 36, @viewport_list_background) do
         {
           :x => 142,
-          :y => 320,
+          :y => Config::BUTTON_TRY_HIDDEN_Y,
           :bitmap =>
           [
             Bitmap.new("img/button-try0.png"),
@@ -61,11 +70,6 @@ class Scene
       @button_try.z = ZOrder::BUTTON_TRY
       @button_try.set_method(:button_down, method(:m_button_try_down))
       @button_try.set_method(:button_up, method(:m_button_try_up))
-      @button_hole.each do |button|
-        button.set_method(:button_down, method(:m_button_hole_down))
-        button.set_method(:button_up, method(:m_button_hole_up))
-        button.z = ZOrder::HOLE
-      end
       bmp_item = Bitmap.new(576, 16)
       bmp_item.blt(0, 0, Bitmap.new("img/numbers.png"), Rect.new(0, 0, 160, 16))
       bmp_item.blt(160, 0, Bitmap.new("img/alphabets.png"), Rect.new(0, 0, 416, 16))
@@ -101,8 +105,8 @@ class Scene
       end
       @button_previous = Button.new(32, 32) do
         {
-          :x => 320 - 40,
-          :y => 8,
+          :x => 4,
+          :y => 4,
           :bitmap =>
           [
             Bitmap.new("img/button-previous0.png"),
@@ -113,17 +117,28 @@ class Scene
       end
       @button_previous.set_method(:button_down, method(:m_button_previous_down))
       @button_previous.set_method(:button_up, method(:m_button_previous_up))
-      @button_previous.opacity = 0
-      @viewport_list = Viewport.new(32, 160, 256, 144)
+      @viewport_list = Viewport.new(32, 176, 256, 144)
       @viewport_list.z = ZOrder::LIST_CONTENTS
-      @sprite_list_background = Sprite.new
-      @sprite_list_background.x = @viewport_list.rect.x
-      @sprite_list_background.y = @viewport_list.rect.y
-      @sprite_list_background.z = ZOrder::LIST_BACKGROUND
-      @sprite_list_background.bitmap = Bitmap.new(@viewport_list.rect.width, @viewport_list.rect.height)
+
+      
+      @viewport_list_background.z = ZOrder::LIST_BACKGROUND
+      @sprite_list_background = Sprite.new(@viewport_list_background)
+      @sprite_list_background.bitmap = Bitmap.new(320, 160)
       @sprite_list_background.bitmap.fill_rect(@sprite_list_background.src_rect, Color.new(0, 0, 0, 128))
+      @sprite_list_background.bitmap.fill_rect(0, 0, 320, 16, Color.new(0, 0, 0, 192))
+      @sprite_list_background.bitmap.fill_rect(30, 0, 1, 160, Color.new(0, 0, 0, 192))
+      @sprite_list_background.bitmap.fill_rect(62, 0, 1, 160, Color.new(0, 0, 0, 192))
+      @sprite_list_background.bitmap.fill_rect(150, 0, 1, 160, Color.new(0, 0, 0, 192))
+      @sprite_list_background.bitmap.fill_rect(288, 0, 1, 160, Color.new(0, 0, 0, 192))
+      @sprite_list_label = Sprite.new(@viewport_list_background)
+      @sprite_list_label.bitmap = Bitmap.new(320, 24)
+      @sprite_list_label.bitmap.font.size = 14
+      @sprite_list_label.bitmap.draw_text(30, 0, 32, 14, "no", 1)
+      @sprite_list_label.bitmap.draw_text(62, 0, 88, 14, "ur answer", 1)
+      @sprite_list_label.bitmap.draw_text(150, 0, 138, 14, "result", 1)
+
       @sprite_list = Sprite.new(@viewport_list)
-      @sprite_list.bitmap = Bitmap.new(@viewport_list.rect.width, Config::LIST_ITEM_SIZE * Config::LIST_HEIGHT_PER_LINE)
+      @sprite_list.bitmap = Bitmap.new(@viewport_list.rect.width, Config::LIST_HEIGHT)
       @sprite_list.bitmap.font.size = 16
       @bitmap_bull = Bitmap.new("img/bull.png")
       @bitmap_cow = Bitmap.new("img/cow.png")
@@ -132,7 +147,32 @@ class Scene
     end
 
     def dispose
-
+      @sprite_black.bitmap.dispose
+      @sprite_black.dispose
+      @sprite_background.bitmap.dispose
+      @sprite_background.dispose
+      @button_hole.each do |button|
+        button.dispose
+      end
+      @button_try.dispose
+      @sprite_item.each do |spr|
+        spr.bitmap.dispose
+        spr.dispose
+      end
+      @button_item_circle.each do |button|
+        button.dispose
+      end
+      @button_previous.dispose
+      @sprite_list_background.bitmap.dispose
+      @sprite_list_background.dispose
+      @sprite_list_label.bitmap.dispose
+      @sprite_list_label.dispose
+      @sprite_list.bitmap.dispose
+      @sprite_list.dispose
+      @bitmap_bull.dispose
+      @bitmap_cow.dispose
+      @viewport_list.dispose
+      @viewport_black.dispose
     end
 
     def update_phase
@@ -142,6 +182,14 @@ class Scene
         @sprite_black.opacity = 0 if @sprite_black.opacity < 0
         return if @sprite_black.opacity != 0
         @phase = -1
+      when 10
+        @sprite_black.opacity += 5
+        @sprite_black.opacity = 255 if @sprite_black.opacity > 255
+        return if @sprite_black.opacity != 255
+        @phase = 11
+      when 11
+        dispose
+        SceneManager.switch(Scene::Level)
       end
     end
 
@@ -160,11 +208,12 @@ class Scene
     end
 
     def m_button_try_up
-      if @my_answer.include?(nil)
-        return
-      end
+      return if @my_answer.include? nil
       @count += 1
       push_log
+      if @my_answer == @real_answer
+        SceneManager.switch(Scene::Result, @queue_log.last)
+      end
     end
 
     def m_button_previous_down
@@ -172,7 +221,7 @@ class Scene
     end
 
     def m_button_previous_up
-      
+      @phase = 10
     end
 
     def item_follow_cursor(i)
@@ -232,22 +281,6 @@ class Scene
       when 36
         return ascii[0] - '0'[0] if ascii[0] >= '0'[0] && ascii[0] <= '9'[0]
         return ascii[0] - 'A'[0] + 10
-      end
-    end
-
-    def draw_log(y, count, answer, bull, cow)
-      @sprite_list.bitmap.font.bold = false
-      @sprite_list.bitmap.draw_text(4, y, 36, Config::LIST_HEIGHT_PER_LINE, sprintf("%03d", count))
-      @sprite_list.bitmap.font.bold = true
-      @sprite_list.bitmap.draw_text(40, y, 70, Config::LIST_HEIGHT_PER_LINE, answer.join("."))
-      x = @viewport_list.rect.width
-      for i in 0...cow
-        x -= Config::LIST_HEIGHT_PER_LINE
-        @sprite_list.bitmap.blt(x, y, @bitmap_cow, Rect.new(0, 0, 24, 24))
-      end
-      for i in 0...bull
-        x -= Config::LIST_HEIGHT_PER_LINE
-        @sprite_list.bitmap.blt(x, y, @bitmap_bull, Rect.new(0, 0, 24, 24))
       end
     end
 

@@ -21,6 +21,18 @@ class Scene
       @sprite_title.bitmap.font.size = 24
       @sprite_title.bitmap.font.color = Color.new(255, 255, 255)
       @sprite_title.bitmap.draw_text(0, 0, 320, 32, "Choose Level", 1)
+      @sprite_ground = Sprite.new
+      @sprite_ground.bitmap = Bitmap.new("img/ground.png")
+      @sprite_ground.x = 110
+      @sprite_ground.y = 230
+      @sprite_label_digit = Sprite.new
+      @sprite_label_digit.bitmap = Bitmap.new("img/label_digits.png")
+      @sprite_label_digit.x = 104
+      @sprite_label_digit.y = 145
+      @sprite_label_range = Sprite.new
+      @sprite_label_range.bitmap = Bitmap.new("img/label_ranges.png")
+      @sprite_label_range.x = 173
+      @sprite_label_range.y = 145
       @sprite_digit = Sprite.new
       @sprite_digit.bitmap = Bitmap.new(80, 16)
       @sprite_digit.bitmap.blt(0, 0, Bitmap.new("img/numbers.png"), Rect.new(32, 0, 80, 16))
@@ -83,12 +95,19 @@ class Scene
       @button_range.dispose
       @sprite_background.bitmap.dispose
       @sprite_background.dispose
+      @sprite_ground.bitmap.dispose
+      @sprite_ground.dispose
+      @sprite_label_digit.bitmap.dispose
+      @sprite_label_digit.dispose
+      @sprite_label_range.bitmap.dispose
+      @sprite_label_range.dispose
       @sprite_title.bitmap.dispose
       @sprite_title.dispose
       @sprite_digit.bitmap.dispose
       @sprite_digit.dispose
       @sprite_range.bitmap.dispose
       @sprite_range.dispose
+      @sprite_black.bitmap.dispose
       @sprite_black.dispose
     end
 
@@ -105,39 +124,8 @@ class Scene
       @phase = 0
     end
 
-    def m_button_digit_down
-      @type_digit = (@type_digit + 1) % 5
-      if @type_digit == 0
-        @type_range = 3
-      else
-        if @type_range == 3
-          @type_range = 0
-        end
-      end
-      case @type_digit
-      when 1
-        Audio.se_play("sound/moo3.wav")
-      when 2
-        Audio.se_play("sound/moo4.wav")
-      when 3
-        Audio.se_play("sound/moo5.wav")
-      when 4
-        Audio.se_play("sound/moo6.wav")
-      end
-      refresh_eyeball
-    end
-
     def m_button_digit_up
 
-    end
-
-    def m_button_range_down
-      if @type_digit == 0
-        @type_range = 3
-      else
-        @type_range = (@type_range + 1) % 3
-      end
-      refresh_eyeball
     end
 
     def m_button_range_up
@@ -147,6 +135,11 @@ class Scene
     def refresh_eyeball
       @sprite_digit.src_rect.x = @type_digit * 16
       @sprite_range.src_rect.x = @type_range * 24
+    end
+
+    def update_label
+      @sprite_label_digit.y = 145 + (Graphics.frame_count / 15) % 2
+      @sprite_label_range.y = 145 + (Graphics.frame_count / 15) % 2
     end
 
     def update_phase
@@ -181,6 +174,7 @@ class Scene
       @button_digit.update
       @button_range.update
       update_play_button
+      update_label
       update_phase
     end
   end

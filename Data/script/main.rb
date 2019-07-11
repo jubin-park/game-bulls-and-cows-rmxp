@@ -7,6 +7,7 @@ require "scene-manager"
 require "scene/intro"
 require "scene/level"
 require "scene/game"
+require "scene/result"
 
 require "button"
 
@@ -24,8 +25,8 @@ Graphics.resize_screen Resolution.width, Resolution.height
 
 a = [[*('0'..'9')], [*('A'..'Z')], [*('0'..'9')] + [*('A'..'Z')]]
 
-#SceneManager.switch(Scene::Game, 3, a[2])
-SceneManager.switch(Scene::Intro)
+#SceneManager.switch(Scene::Game, 3, a[0])
+SceneManager.switch(Scene::Level)
 
 loop do
   if not SceneManager.now.nil?

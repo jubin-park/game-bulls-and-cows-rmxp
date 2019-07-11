@@ -77,6 +77,7 @@ class Button
   end
   
   def update_bitmap
+    return if @sprite == nil
     return if @sprite.opacity <= 0
     return if @sprite.visible == false
     if !under_mouse?
@@ -137,8 +138,13 @@ class Button
   end
 
   def under_mouse?
+    return false if @sprite == nil
     return false if @sprite.opacity <= 0
     return false if @sprite.visible == false
-    return InputManager.pos.x >= @x && InputManager.pos.x < @x + @width && InputManager.pos.y >= @y && InputManager.pos.y < @y + @height
+    if @sprite.viewport.nil?
+      return InputManager.pos.x >= @x && InputManager.pos.x < @x + @width && InputManager.pos.y >= @y && InputManager.pos.y < @y + @height
+    end
+    vx, vy = @sprite.viewport.rect.x, @sprite.viewport.rect.y
+    return InputManager.pos.x >= vx + @x && InputManager.pos.x < vx + @x + @width && InputManager.pos.y >= vy + @y && InputManager.pos.y < vy + @y + @height
   end
 end

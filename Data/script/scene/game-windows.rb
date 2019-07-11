@@ -1,5 +1,26 @@
 class Scene
   class Game
+    def draw_log(y, count, answer, bull, cow)
+      @sprite_list.bitmap.font.color = if bull == @digit
+        Color.new(255, 255, 0)
+      else
+        Color.new(255, 255, 255)
+      end
+      @sprite_list.bitmap.font.bold = false
+      @sprite_list.bitmap.draw_text(4, y, 36, Config::LIST_HEIGHT_PER_LINE, sprintf("%03d", count))
+      @sprite_list.bitmap.font.bold = true
+      @sprite_list.bitmap.draw_text(34, y, 82, Config::LIST_HEIGHT_PER_LINE, answer.join("."), 1)
+      x = @viewport_list.rect.width - 2
+      for i in 0...cow
+        x -= 22
+        @sprite_list.bitmap.blt(x, y, @bitmap_cow, Rect.new(0, 0, 24, 24))
+      end
+      for i in 0...bull
+        x -= 22
+        @sprite_list.bitmap.blt(x, y, @bitmap_bull, Rect.new(0, 0, 24, 24))
+      end
+    end
+
     def m_button_hole_down(hole_index)
       # when item is already picked
       if @now_picked_item != nil
@@ -99,7 +120,6 @@ class Scene
     def update
       Graphics.update
       InputManager.update
-      update_phase
       @button_hole.each do |button|
         button.update
       end
@@ -122,6 +142,7 @@ class Scene
         update_show_try_button
         update_fade_try_button
       end
+      update_phase
     end
   end
 end
