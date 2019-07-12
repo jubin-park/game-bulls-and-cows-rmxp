@@ -39,7 +39,7 @@ class Scene
         @real_answer = generate_answer(args[0], args[1].clone)
       end
 
-      p @real_answer
+#      p @real_answer
 
       @now_picked_item = nil
       @viewport_black = Viewport.new(0, 0, 320, 320)

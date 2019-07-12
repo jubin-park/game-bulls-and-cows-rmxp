@@ -67,15 +67,20 @@ class Scene
 
     def m_button_replay_up
       return if @phase == 0
+      $user_data.last_used.log = []
+      $user_data.save
       SceneManager.previous.dispose
       dispose
       SceneManager.switch(Scene::Game, 
         Scene::Level::Config::LEVEL_DIGIT[$user_data.last_used.digit],
         Scene::Level::Config::LEVEL_RANGE[$user_data.last_used.range])
+      
     end
 
     def m_button_exit_up
       return if @phase == 0
+      $user_data.last_used.log = []
+      $user_data.save
       SceneManager.previous.dispose
       dispose
       SceneManager.switch(Scene::Level)

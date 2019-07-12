@@ -75,34 +75,33 @@ class Scene
     end
 
     def m_button_newgame_up
-      return if @phase == 0
-      $user_data.last_used.digit = @select_digit
-      $user_data.last_used.range = @select_range
-      $user_data.last_used.my_answer = []
-      $user_data.last_used.real_answer = []
-      $user_data.last_used.log = []
-      $user_data.save
-      SceneManager.previous.dispose
-      dispose
-      SceneManager.switch(Scene::Game, 
-        Scene::Level::Config::LEVEL_DIGIT[@select_digit],
-        Scene::Level::Config::LEVEL_RANGE[@select_range])
+      return if @phase >= 0
+      @phase = 10
     end
 
     def m_button_continue_up
-      return if @phase == 0
-      SceneManager.previous.dispose
-      dispose
-      SceneManager.switch(Scene::Game, 
-        Scene::Level::Config::LEVEL_DIGIT[$user_data.last_used.digit],
-        Scene::Level::Config::LEVEL_RANGE[$user_data.last_used.range])
+      return if @phase >= 0
+      @phase = 20
     end
 
     def m_button_shutdown_up
-      return if @phase == 0
-      dispose
-      SceneManager.now = SceneManager.previous
+      return if @phase >= 0
+      @phase = 30
     end   
+
+    def fadeout_ended
+      @sprite_window.opacity -= 10
+      @sprite_text.opacity -= 10
+      @button_newgame.opacity -= 10
+      @button_continue.opacity -= 10
+      @button_shutdown.opacity -= 10
+      return if @sprite_window.opacity != 0
+      return if @sprite_text.opacity != 0
+      return if @button_newgame.opacity != 0
+      return if @button_continue.opacity != 0
+      return if @button_shutdown.opacity != 0
+      return true
+    end
 
     def update_phase
       case @phase
@@ -118,6 +117,36 @@ class Scene
         return if @button_continue.opacity != 255
         return if @button_shutdown.opacity != 255
         @phase = -1
+      when 10
+        return if not fadeout_ended
+        @phase = 11
+      when 11
+        $user_data.last_used.digit = @select_digit
+        $user_data.last_used.range = @select_range
+        $user_data.last_used.my_answer = []
+        $user_data.last_used.real_answer = []
+        $user_data.last_used.log = []
+        $user_data.save
+        SceneManager.previous.dispose
+        dispose
+        SceneManager.switch(Scene::Game, 
+          Scene::Level::Config::LEVEL_DIGIT[@select_digit],
+          Scene::Level::Config::LEVEL_RANGE[@select_range])
+      when 20
+        return if not fadeout_ended
+        @phase = 21
+      when 21
+        SceneManager.previous.dispose
+        dispose
+        SceneManager.switch(Scene::Game, 
+          Scene::Level::Config::LEVEL_DIGIT[$user_data.last_used.digit],
+          Scene::Level::Config::LEVEL_RANGE[$user_data.last_used.range])
+      when 30
+        return if not fadeout_ended
+        @phase = 31
+      when 31
+        dispose
+        SceneManager.now = SceneManager.previous
       end
     end
 
