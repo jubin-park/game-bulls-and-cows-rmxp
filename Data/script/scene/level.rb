@@ -41,14 +41,12 @@ class Scene
       @sprite_digit = Sprite.new
       @sprite_digit.bitmap = Bitmap.new(80, 16)
       @sprite_digit.bitmap.blt(0, 0, Bitmap.new("img/numbers.png"), Rect.new(32, 0, 80, 16))
-      #@sprite_digit.src_rect.x = @type_digit * 16
       @sprite_digit.src_rect.width = 16
       @sprite_digit.x = 116
       @sprite_digit.y = 173
       @sprite_digit.z = 1
       @sprite_range = Sprite.new
       @sprite_range.bitmap = Bitmap.new("img/range.png")
-      #@sprite_range.src_rect.y = @type_range * 16
       @sprite_range.src_rect.width = 24
       @sprite_range.x = 183
       @sprite_range.y = 169

@@ -1,6 +1,6 @@
 class UserData
   FILE_NAME = "save.data"
-  LastData = Struct.new(:digit, :range)
+  LastData = Struct.new(:digit, :range, :my_answer, :real_answer, :log)
 
   attr_reader :last_used
 
@@ -11,6 +11,9 @@ class UserData
       @last_used = LastData.new
       @last_used.digit = 1
       @last_used.range = 0
+      @last_used.my_answer = []
+      @last_used.real_answer = []
+      @last_used.log = []
       save
     end
   end

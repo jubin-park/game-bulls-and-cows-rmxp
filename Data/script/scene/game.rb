@@ -22,9 +22,25 @@ class Scene
       args = *args
       @digit = args[0]
       @item_size = args[1].length
-      p @real_answer = generate_answer(args[0], args[1].clone)
       @phase = 0
       @my_answer = Array.new(@digit)
+      rest = $user_data.last_used.my_answer.clone
+      rest.delete(nil)
+      if $user_data.last_used.log.size > 0
+        @queue_log = $user_data.last_used.log
+        @count = @queue_log.last.first
+        @real_answer = $user_data.last_used.real_answer
+        if rest.size > 0
+          @my_answer = $user_data.last_used.my_answer
+        end
+      else
+        @queue_log = Array.new
+        @count = 0
+        @real_answer = generate_answer(args[0], args[1].clone)
+      end
+
+      p @real_answer
+
       @now_picked_item = nil
       @viewport_black = Viewport.new(0, 0, 320, 320)
       @viewport_black.z = ZOrder::BLACK_SCREEN
@@ -66,7 +82,6 @@ class Scene
       end
       @button_try.opacity = 128
       @button_try.z = ZOrder::BUTTON_TRY
-      @button_try.set_method(:button_down, method(:m_button_try_down))
       @button_try.set_method(:button_up, method(:m_button_try_up))
       bmp_item = Bitmap.new(576, 16)
       bmp_item.blt(0, 0, Bitmap.new("img/numbers.png"), Rect.new(0, 0, 160, 16))
@@ -113,12 +128,9 @@ class Scene
           ]
         }
       end
-      @button_previous.set_method(:button_down, method(:m_button_previous_down))
       @button_previous.set_method(:button_up, method(:m_button_previous_up))
       @viewport_list = Viewport.new(32, 176, 256, 144)
       @viewport_list.z = ZOrder::LIST_CONTENTS
-
-      
       @viewport_list_background.z = ZOrder::LIST_BACKGROUND
       @sprite_list_background = Sprite.new(@viewport_list_background)
       @sprite_list_background.bitmap = Bitmap.new(320, 160)
@@ -134,14 +146,13 @@ class Scene
       @sprite_list_label.bitmap.draw_text(30, 0, 32, 14, "no", 1)
       @sprite_list_label.bitmap.draw_text(62, 0, 88, 14, "ur answer", 1)
       @sprite_list_label.bitmap.draw_text(150, 0, 138, 14, "result", 1)
-
       @sprite_list = Sprite.new(@viewport_list)
       @sprite_list.bitmap = Bitmap.new(@viewport_list.rect.width, Config::LIST_HEIGHT)
       @sprite_list.bitmap.font.size = 16
       @bitmap_bull = Bitmap.new("img/bull.png")
       @bitmap_cow = Bitmap.new("img/cow.png")
-      @queue_log = Array.new
-      @count = 0
+      refresh_log if @queue_log.size > 0
+      refresh_hole if rest.size > 0
     end
 
     def dispose
@@ -201,25 +212,25 @@ class Scene
       @button_try.y = Config::BUTTON_TRY_HIDDEN_Y if @button_try.y > Config::BUTTON_TRY_HIDDEN_Y
     end
 
-    def m_button_try_down
-      
-    end
-
     def m_button_try_up
       return if @my_answer.include? nil
       @count += 1
       push_log
       if @my_answer == @real_answer
         SceneManager.switch(Scene::Result, @queue_log.last)
+        $user_data.last_used.my_answer = []
+        $user_data.last_used.real_answer = []
+        $user_data.last_used.log = []
+        $user_data.save
       end
-    end
-
-    def m_button_previous_down
-
     end
 
     def m_button_previous_up
       @phase = 10
+      $user_data.last_used.my_answer = @my_answer
+      $user_data.last_used.real_answer = @real_answer
+      $user_data.last_used.log = @queue_log
+      $user_data.save
     end
 
     def item_follow_cursor(i)
@@ -293,6 +304,26 @@ class Scene
       @queue_log.each do |log|
         draw_log(y, *log)
         y += Config::LIST_HEIGHT_PER_LINE
+      end
+    end
+
+    def refresh_log
+      # draw
+      draw_full_log_list
+      # scroll
+      count_item_showed = @viewport_list.rect.height / Config::LIST_HEIGHT_PER_LINE.to_f
+      if @queue_log.size >= count_item_showed.ceil
+        @viewport_list.oy = @queue_log.size * Config::LIST_HEIGHT_PER_LINE - @viewport_list.rect.height
+      end
+    end
+
+    def refresh_hole
+      @my_answer.each_index do |hole_index|
+        item = @my_answer[hole_index]
+        next if item == nil
+        i = convert_ascii_to_index(item)
+        @sprite_item[i].x = get_inhole_item_pos_x(hole_index)
+        @sprite_item[i].y = get_inhole_item_pos_y(hole_index)
       end
     end
 
