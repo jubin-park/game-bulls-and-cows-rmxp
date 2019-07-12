@@ -13,6 +13,10 @@ module SceneManager
     @@now_scene
   end
 
+  def self.now=(value)
+    @@now_scene = value
+  end
+
   def self.previous
     @@previous_scene
   end

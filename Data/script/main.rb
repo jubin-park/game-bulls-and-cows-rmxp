@@ -9,6 +9,7 @@ require "scene/intro"
 require "scene/level"
 require "scene/game"
 require "scene/result"
+require "scene/play-alert"
 
 require "ui/button"
 

@@ -123,7 +123,14 @@ class Scene
       @button_play.sprite.bitmap = @bitmap_play[2]
       @button_play.sprite.src_rect.width = @button_play.width
       @button_play_index = PLAY_BUTTON_FRAME_TAIL if @button_play_index > PLAY_BUTTON_FRAME_TAIL
-      @phase = 0
+      if $user_data.last_used.log.size > 0
+        SceneManager.switch(Scene::PlayAlert, @type_digit, @type_range)
+      else
+        @phase = 0
+        $user_data.last_used.digit = @type_digit
+        $user_data.last_used.range = @type_range
+        $user_data.save
+      end
     end
 
     def m_button_digit_up
@@ -137,9 +144,6 @@ class Scene
     def refresh_eyeball
       @sprite_digit.src_rect.x = @type_digit * 16
       @sprite_range.src_rect.x = @type_range * 24
-      $user_data.last_used.digit = @type_digit
-      $user_data.last_used.range = @type_range
-      $user_data.save
     end
 
     def update_label
