@@ -37,10 +37,7 @@ class Scene
         @queue_log = Array.new
         @count = 0
         @real_answer = generate_answer(args[0], args[1].clone)
-      end
-
-#      p @real_answer
-
+      end      
       @now_picked_item = nil
       @viewport_black = Viewport.new(0, 0, 320, 320)
       @viewport_black.z = ZOrder::BLACK_SCREEN
@@ -153,6 +150,14 @@ class Scene
       @bitmap_cow = Bitmap.new("img/cow.png")
       refresh_log if @queue_log.size > 0
       refresh_hole if rest.size > 0
+      if $NEKO_RUBY != nil
+        t = Time.new
+        if (t - $user_data.last_used.ad_time).to_f > 180
+          $neko.showFullAD 'admob'
+        end
+        $user_data.last_used.ad_time = t
+        $user_data.save
+      end
     end
 
     def dispose
@@ -222,15 +227,14 @@ class Scene
         $user_data.last_used.real_answer = []
         $user_data.last_used.log = []
         $user_data.save
+      else
+        save_data
       end
     end
 
     def m_button_previous_up
       @phase = 10
-      $user_data.last_used.my_answer = @my_answer
-      $user_data.last_used.real_answer = @real_answer
-      $user_data.last_used.log = @queue_log
-      $user_data.save
+      save_data
     end
 
     def item_follow_cursor(i)
@@ -353,6 +357,13 @@ class Scene
         range.delete_at(idx)
       end
       return answer
+    end
+
+    def save_data
+      $user_data.last_used.my_answer = @my_answer
+      $user_data.last_used.real_answer = @real_answer
+      $user_data.last_used.log = @queue_log
+      $user_data.save
     end
   end
 end

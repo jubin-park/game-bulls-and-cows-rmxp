@@ -27,7 +27,7 @@ Graphics.resize_screen Resolution.width, Resolution.height
 
 $user_data = UserData.new
 
-SceneManager.switch(Scene::Level)
+SceneManager.switch(Scene::Intro)
 
 loop do
   if not SceneManager.now.nil?

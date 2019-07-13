@@ -34,6 +34,7 @@ class Scene
           @my_answer[hole_index] = nil
         end
       end
+      save_data
     end
 
     def m_button_hole_up(hole_index)
@@ -45,6 +46,7 @@ class Scene
       if not @my_answer.include?(item)
         @now_picked_item = item
       end
+      save_data
     end
 
     def m_button_item_up(index)
@@ -71,7 +73,6 @@ class Scene
 
     def update_drop_item
       return if @now_picked_item == nil
-
       failed = true
       @button_hole.each_index do |hole_index|
         if @button_hole[hole_index].under_touch_last?
@@ -95,6 +96,7 @@ class Scene
         @sprite_item[i].x = 2 + get_first_item_pos_x(i)
         @sprite_item[i].y = 2 + get_first_item_pos_y(i)
       end
+      save_data
     end
 
     def update_fade_try_button

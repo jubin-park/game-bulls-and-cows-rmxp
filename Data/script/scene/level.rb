@@ -3,7 +3,7 @@ class Scene
     module Config
       PLAY_BUTTON_FRAME_HEAD = 0
       PLAY_BUTTON_FRAME_TAIL = 7
-      LEVEL_DIGIT = [2, 3, 4, 5, 6]
+      LEVEL_DIGIT = [3, 4, 5, 6]
       LEVEL_RANGE = [[*('0'..'9')], [*('A'..'Z')], [*('0'..'9')] + [*('A'..'Z')]]
     end
 
@@ -40,7 +40,7 @@ class Scene
       @sprite_label_range.y = 145
       @sprite_digit = Sprite.new
       @sprite_digit.bitmap = Bitmap.new(80, 16)
-      @sprite_digit.bitmap.blt(0, 0, Bitmap.new("img/numbers.png"), Rect.new(32, 0, 80, 16))
+      @sprite_digit.bitmap.blt(0, 0, Bitmap.new("img/numbers.png"), Rect.new(48, 0, 64, 16))
       @sprite_digit.src_rect.width = 16
       @sprite_digit.x = 116
       @sprite_digit.y = 173
@@ -113,6 +113,26 @@ class Scene
       @sprite_black.dispose
     end
 
+    def m_button_digit_down
+      @type_digit = (@type_digit + 1) % 4
+      case @type_digit
+      when 0
+        Audio.se_play("sound/moo3.wav")
+      when 1
+        Audio.se_play("sound/moo4.wav")
+      when 2
+        Audio.se_play("sound/moo5.wav")
+      when 3
+        Audio.se_play("sound/moo6.wav")
+      end
+      refresh_eyeball
+    end
+
+    def m_button_range_down
+      @type_range = (@type_range + 1) % 3
+      refresh_eyeball
+    end
+
     def m_button_play_down
       @button_play.sprite.bitmap = @bitmap_play[2]
       @button_play.sprite.src_rect.width = @button_play.width
@@ -166,13 +186,7 @@ class Scene
         end
       when 2
         dispose
-        digit = LEVEL_DIGIT[@type_digit]
-        if (digit == 2)
-          range = ['A', 'D']
-        else
-          range = LEVEL_RANGE[@type_range]
-        end
-        SceneManager.switch(Scene::Game, digit, range)
+        SceneManager.switch(Scene::Game, LEVEL_DIGIT[@type_digit], LEVEL_RANGE[@type_range])
       end
     end
 

@@ -1,26 +1,5 @@
 class Scene
   class Level
-    def m_button_digit_down
-      @type_digit = (@type_digit + 1) % 5
-      @type_digit = 1 if @type_digit == 0
-      case @type_digit
-      when 1
-        Audio.se_play("sound/moo3.wav")
-      when 2
-        Audio.se_play("sound/moo4.wav")
-      when 3
-        Audio.se_play("sound/moo5.wav")
-      when 4
-        Audio.se_play("sound/moo6.wav")
-      end
-      refresh_eyeball
-    end
-
-    def m_button_range_down
-      @type_range = (@type_range + 1) % 3
-      refresh_eyeball
-    end
-
     def update_play_button
       case @button_play.state_mouse
       when :down

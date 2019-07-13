@@ -46,6 +46,7 @@ class Scene
         end
       end
       @now_picked_item = nil
+      save_data
     end
 
     def m_button_hole_up(hole_index)
@@ -66,6 +67,7 @@ class Scene
       if not @my_answer.include?(item)
         @now_picked_item = item
       end
+      save_data
     end
 
     def update_scroll
